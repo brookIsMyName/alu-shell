@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Stop the running 4-to_infinity_and_beyond process
+process_id=$(pgrep -f '^bash ./4-to_infinity_and_beyond$')
+if [ -n "$process_id" ]
+then
+    kill "$process_id"
+fi

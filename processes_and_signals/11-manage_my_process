@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Start, stop, or restart manage_my_process
+
+program="./manage_my_process"
+pid_file="/var/run/my_process.pid"
+
+start_process() {
+    nohup "$program" > /dev/null 2>&1 &
+    echo "$!" > "$pid_file"
+}
+
+stop_process() {
+    if [ -f "$pid_file" ]
+    then
+        process_id=$(cat "$pid_file")
+        if kill -0 "$process_id" 2>/dev/null
+        then
+            kill "$process_id"
+            while kill -0 "$process_id" 2>/dev/null
+            do
+                sleep 0.1
+            done
+        fi
+        rm -f "$pid_file"
+    fi
+}
+
+case "$1" in
+    start)
+        start_process
+        echo "manage_my_process started"
+        ;;
+    stop)
+        stop_process
+        echo "manage_my_process stopped"
+        ;;
+    restart)
+        stop_process
+        start_process
+        echo "manage_my_process restarted"
+        ;;
+    *)
+        echo "Usage: manage_my_process {start|stop|restart}"
+        ;;
+esac
